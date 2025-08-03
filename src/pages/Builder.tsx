@@ -379,7 +379,7 @@ export default function Builder() {
                     <div className="text-center">
                       <div className="text-3xl mb-2">{module.icon}</div>
                       <div className="font-medium text-sm">{module.name}</div>
-                      <div className="text-xs text-muted-foreground">₸{
+                      <div className="text-xs text-muted-foreground">₸{(() => {
                         const moduleMap: { [key: string]: number } = {
                           'zip-zip': 1550,
                           'bio': 1600,
@@ -388,8 +388,8 @@ export default function Builder() {
                           'hedgehog': 900,
                           'press-planet': 3600,
                         };
-                        moduleMap[module.id.split('-')[0]] || (module.price * 50)
-                      }</div>
+                        return moduleMap[module.id.split('-')[0]] || (module.price * 50);
+                      })()}</div>
                     </div>
                   </Card>
                 ))}
@@ -419,7 +419,7 @@ export default function Builder() {
                                 <div className="text-3xl">{module.icon}</div>
                                 <div>
                                   <CardTitle className="text-lg">{module.name}</CardTitle>
-                                  <p className="text-sm text-muted-foreground">₸{
+                                  <p className="text-sm text-muted-foreground">₸{(() => {
                                     const moduleMap: { [key: string]: number } = {
                                       'zip-zip': 1550,
                                       'bio': 1600,
@@ -428,8 +428,8 @@ export default function Builder() {
                                       'hedgehog': 900,
                                       'press-planet': 3600,
                                     };
-                                    moduleMap[module.id.split('-')[0]] || (module.price * 50)
-                                  }</p>
+                                    return moduleMap[module.id.split('-')[0]] || (module.price * 50);
+                                  })()}</p>
                                 </div>
                               </div>
                               <Button
