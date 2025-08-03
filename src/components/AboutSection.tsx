@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Target, Globe, Leaf } from "lucide-react";
 import qoldauTeam from "@/assets/qoldau-team.jpg";
 import childTherapy from "@/assets/child-therapy.jpg";
+import { AnimatedChart } from "./AnimatedChart";
 
 export const AboutSection = () => {
   const goals = [
@@ -82,105 +83,8 @@ export const AboutSection = () => {
           </div>
         </div>
 
-        {/* Understanding Autism Today - Kazakhstan Stats */}
-        <div className="mb-20">
-          <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold mb-4">📈 Understanding Autism Today</h3>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Autism diagnosis rates in Kazakhstan have grown significantly over the past two decades, highlighting the urgent need for accessible therapeutic tools.
-            </p>
-          </div>
-          
-          <Card className="p-8 kindu-shadow mb-8">
-            <h4 className="text-2xl font-semibold text-center mb-8">Growth of Autism Diagnoses in Kazakhstan</h4>
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">300</div>
-                <div className="text-sm text-muted-foreground">2002</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">1,100</div>
-                <div className="text-sm text-muted-foreground">2010</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">2,300</div>
-                <div className="text-sm text-muted-foreground">2016</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">4,800</div>
-                <div className="text-sm text-muted-foreground">2020</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-accent mb-2">7,500</div>
-                <div className="text-sm text-muted-foreground">2025 (projection)</div>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Team Introduction */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-          <div className="space-y-6">
-            <h2 className="text-3xl lg:text-4xl font-bold">
-              Meet Team <span className="kindu-gradient-primary bg-clip-text text-transparent">Qoldau</span>
-            </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              We are a passionate team from Kazakhstan dedicated to creating innovative solutions for children with autism spectrum disorders. 
-              Our name "Qoldau" means "support" in Kazakh, reflecting our mission to provide comprehensive support for families navigating neurodiversity.
-            </p>
-          </div>
-          <div className="space-y-6">
-            <h4 className="text-xl font-semibold mb-6">👥 Meet the Team</h4>
-            <div className="grid grid-cols-2 gap-6">
-              {teamMembers.map((member, index) => (
-                <div key={index} className="text-center">
-                  <div className="w-20 h-20 mx-auto rounded-full mb-3 overflow-hidden">
-                    <img
-                      src={member.photo}
-                      alt={member.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        // Fallback to gradient circle with initial if image fails to load
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const fallbackDiv = target.nextElementSibling as HTMLDivElement;
-                        if (fallbackDiv) {
-                          fallbackDiv.style.display = 'flex';
-                        }
-                      }}
-                    />
-                    <div 
-                      className={`w-full h-full ${member.color} flex items-center justify-center`}
-                      style={{ display: 'none' }}
-                    >
-                      <span className="text-white font-bold text-lg">{member.fallback}</span>
-                    </div>
-                  </div>
-                  <h5 className="font-semibold">{member.name}</h5>
-                  <p className="text-sm text-muted-foreground">{member.role}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Our Goals */}
-        <div className="mb-20">
-          <h3 className="text-3xl font-bold text-center mb-12">Our Mission & Approach</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {goals.map((goal, index) => (
-              <Card key={index} className="kindu-shadow hover:kindu-shadow-warm kindu-transition hover:scale-105">
-                <CardContent className="p-6 text-center space-y-4">
-                  <div className="w-16 h-16 mx-auto kindu-gradient-primary rounded-full flex items-center justify-center">
-                    <goal.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h4 className="text-xl font-semibold">{goal.title}</h4>
-                  <p className="text-muted-foreground">{goal.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+        {/* Understanding Autism Today - Kazakhstan Stats - Animated Chart */}
+        <AnimatedChart />
 
         {/* Global Statistics */}
         <div className="mb-20">
@@ -222,6 +126,24 @@ export const AboutSection = () => {
           </div>
         </div>
 
+        {/* Our Mission - Moved after The Growing Need */}
+        <div className="mb-20">
+          <h3 className="text-3xl font-bold text-center mb-12">Our Mission & Approach</h3>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {goals.map((goal, index) => (
+              <Card key={index} className="kindu-shadow hover:kindu-shadow-warm kindu-transition hover:scale-105">
+                <CardContent className="p-6 text-center space-y-4">
+                  <div className="w-16 h-16 mx-auto kindu-gradient-primary rounded-full flex items-center justify-center">
+                    <goal.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h4 className="text-xl font-semibold">{goal.title}</h4>
+                  <p className="text-muted-foreground">{goal.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
         {/* How Our Cubes Work */}
         <div className="text-center mb-20">
           <h3 className="text-3xl font-bold mb-8">How Kindu Cubes Work</h3>
@@ -253,7 +175,7 @@ export const AboutSection = () => {
         </div>
 
         {/* Materials & Safety */}
-        <div className="text-center">
+        <div className="text-center mb-20">
           <h3 className="text-3xl font-bold mb-8">Materials & Safety</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="p-6 kindu-shadow">
@@ -279,6 +201,52 @@ export const AboutSection = () => {
               <h4 className="font-semibold mb-2">Certified</h4>
               <p className="text-sm text-muted-foreground">All modules meet safety standards</p>
             </Card>
+          </div>
+        </div>
+
+        {/* Meet the Team Qoldau - Moved to the end */}
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6">
+            <h2 className="text-3xl lg:text-4xl font-bold">
+              Meet Team <span className="kindu-gradient-primary bg-clip-text text-transparent">Qoldau</span>
+            </h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              We are a passionate team from Kazakhstan dedicated to creating innovative solutions for children with autism spectrum disorders. 
+              Our name "Qoldau" means "support" in Kazakh, reflecting our mission to provide comprehensive support for families navigating neurodiversity.
+            </p>
+          </div>
+          <div className="space-y-6">
+            <h4 className="text-xl font-semibold mb-6">👥 Meet the Team</h4>
+            <div className="grid grid-cols-2 gap-6">
+              {teamMembers.map((member, index) => (
+                <div key={index} className="text-center">
+                  <div className="w-20 h-20 mx-auto rounded-full mb-3 overflow-hidden">
+                    <img
+                      src={member.photo}
+                      alt={member.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // Fallback to gradient circle with initial if image fails to load
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallbackDiv = target.nextElementSibling as HTMLDivElement;
+                        if (fallbackDiv) {
+                          fallbackDiv.style.display = 'flex';
+                        }
+                      }}
+                    />
+                    <div 
+                      className={`w-full h-full ${member.color} flex items-center justify-center`}
+                      style={{ display: 'none' }}
+                    >
+                      <span className="text-white font-bold text-lg">{member.fallback}</span>
+                    </div>
+                  </div>
+                  <h5 className="font-semibold">{member.name}</h5>
+                  <p className="text-sm text-muted-foreground">{member.role}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
