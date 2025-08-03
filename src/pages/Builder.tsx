@@ -38,23 +38,24 @@ const moduleCategories = [
   { id: "emotional", name: "👣 Emotional & Social", color: "bg-kindu-coral" },
 ];
 
+// Module pricing map in tenge
+const moduleMap: { [key: string]: number } = {
+  'zip-zip': 1550,
+  'bio': 1600,
+  'eco-sea': 3400,
+  'help-kindu': 1400,
+  'hedgehog': 900,
+  'press-planet': 3600,
+  'forest-sounds': 1750,
+  'texture-wheel': 1250,
+  'color-sequencer': 2250,
+  'fine-motor-maze': 1500,
+  'counting-beads': 1400,
+  'emotion-spinner': 1600,
+};
+
 // Centralized module pricing in tenge
 const getModulePriceInTenge = (moduleId: string, fallbackUsdPrice: number): number => {
-  const moduleMap: { [key: string]: number } = {
-    'zip-zip': 1550,
-    'bio': 1600,
-    'eco-sea': 3400,
-    'help-kindu': 1400,
-    'hedgehog': 900,
-    'press-planet': 3600,
-    'forest-sounds': 1750,
-    'texture-wheel': 1250,
-    'color-sequencer': 2250,
-    'fine-motor-maze': 1500,
-    'counting-beads': 1400,
-    'emotion-spinner': 1600,
-  };
-  
   const baseModuleId = moduleId.split('-')[0];
   return moduleMap[baseModuleId] || (fallbackUsdPrice * 50); // fallback conversion rate
 };
