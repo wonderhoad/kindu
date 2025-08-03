@@ -199,8 +199,8 @@ export default function Builder() {
           'press-planet': 3600,
         };
         return faceTotal + (moduleMap[module.id.split('-')[0]] || module.price * 50); // fallback conversion
-      }, 0), 0
-    );
+      }, 0)
+    , 0);
     return basePrice + modulePrice;
   };
 

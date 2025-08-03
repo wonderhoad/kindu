@@ -39,7 +39,8 @@ export const Interactive3DCube = ({
 
     // Camera setup
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    camera.position.set(2, 2, 2);
+    // Фиксируем камеру на безопасном расстоянии и высоте
+    camera.position.set(2, 1.5, 2);
     camera.lookAt(0, 0, 0);
     cameraRef.current = camera;
 
@@ -180,8 +181,11 @@ export const Interactive3DCube = ({
         y: clientY - previousMousePosition.y
       };
 
+      // Разрешаем только горизонтальное вращение (влево-вправо)
       cubeRef.current.rotation.y += deltaMove.x * 0.01;
-      cubeRef.current.rotation.x += deltaMove.y * 0.01;
+      
+      // Запрещаем вертикальное вращение (вверх-вниз)
+      // cubeRef.current.rotation.x += deltaMove.y * 0.01; // отключено
 
       previousMousePosition = { x: clientX, y: clientY };
     };
@@ -225,9 +229,9 @@ export const Interactive3DCube = ({
     const animate = () => {
       animationIdRef.current = requestAnimationFrame(animate);
       
-      // Auto-rotate when not dragging
+      // Медленное автоматическое вращение только когда не перетаскиваем
       if (!isDragging && cubeRef.current) {
-        cubeRef.current.rotation.y += 0.005;
+        cubeRef.current.rotation.y += 0.002; // Уменьшили скорость
       }
       
       renderer.render(scene, camera);
@@ -266,6 +270,21 @@ export const Interactive3DCube = ({
         cursor: 'grab',
         borderRadius: '12px',
         overflow: 'hidden'
+      }}
+      onMouseDown={() => {
+        if (mountRef.current) {
+          mountRef.current.style.cursor = 'grabbing';
+        }
+      }}
+      onMouseUp={() => {
+        if (mountRef.current) {
+          mountRef.current.style.cursor = 'grab';
+        }
+      }}
+      onMouseLeave={() => {
+        if (mountRef.current) {
+          mountRef.current.style.cursor = 'grab';
+        }
       }}
     />
   );
