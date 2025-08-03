@@ -6,50 +6,17 @@ import { useNavigate } from "react-router-dom";
 export const PricingSection = () => {
   const navigate = useNavigate();
 
-  const pricingTiers = [
-    {
-      name: "Basic Cube",
-      price: "$150",
-      description: "Perfect for getting started with sensory play",
-      features: [
-        "6 basic sensory modules",
-        "Oak wood construction",
-        "Basic customization",
-        "Standard shipping",
-        "1-year warranty"
-      ],
-      popular: false
-    },
-    {
-      name: "Advanced Cube",
-      price: "$250",
-      description: "Most popular choice for comprehensive development",
-      features: [
-        "12 premium modules",
-        "AI-guided customization",
-        "Advanced sensory elements",
-        "Express shipping",
-        "2-year warranty",
-        "Monthly progress tracking"
-      ],
-      popular: true
-    },
-    {
-      name: "Professional Cube",
-      price: "$350",
-      description: "For therapy centers and special needs programs",
-      features: [
-        "18 professional modules",
-        "Therapist consultation",
-        "Clinical-grade materials",
-        "Priority support",
-        "3-year warranty",
-        "Quarterly assessments",
-        "Bulk discounts available"
-      ],
-      popular: false
-    }
+  const componentPricing = [
+    { name: "Cube Body", price: "4 500₸", description: "Oak wood construction" },
+    { name: "Zip-Zip Panel", price: "1 550₸", description: "Fine motor skills training" },
+    { name: "Bio Panel", price: "1 600₸", description: "Natural textures experience" },
+    { name: "Eco-Sea Panel", price: "3 400₸", description: "Magnetic ocean sorting game" },
+    { name: "Help Kindu Panel", price: "1 400₸", description: "Character puzzle solving" },
+    { name: "Hedgehog Panel", price: "900₸", description: "Tactile sensory soothing" },
+    { name: "Press the Planet Panel", price: "3 600₸", description: "Interactive planet exploration" },
   ];
+
+  const totalPrice = "16 950₸";
 
   return (
     <section className="py-20 bg-muted/30">
@@ -59,59 +26,52 @@ export const PricingSection = () => {
             Transparent <span className="kindu-gradient-primary bg-clip-text text-transparent">Pricing</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Every cube is custom-built based on your child's needs. Our pricing varies with the complexity 
-            and number of sensory modules you choose.
+            Every cube is custom-built based on your child's needs. Here's our transparent 
+            component pricing structure.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          {pricingTiers.map((tier, index) => (
-            <Card 
-              key={index} 
-              className={`relative kindu-shadow hover:kindu-shadow-warm kindu-transition hover:scale-105 ${
-                tier.popular ? 'ring-2 ring-primary' : ''
-              }`}
-            >
-              {tier.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="kindu-gradient-primary text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
-                    <Star className="w-4 h-4" />
-                    Most Popular
+        {/* Component Pricing Breakdown */}
+        <div className="max-w-4xl mx-auto mb-16">
+          <Card className="kindu-shadow hover:kindu-shadow-warm kindu-transition">
+            <CardHeader className="text-center pb-8">
+              <CardTitle className="text-2xl mb-2">Component Pricing</CardTitle>
+              <p className="text-muted-foreground">Build your perfect sensory cube</p>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              {componentPricing.map((component, index) => (
+                <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
+                  <div>
+                    <div className="font-semibold">{component.name}</div>
+                    <div className="text-sm text-muted-foreground">{component.description}</div>
+                  </div>
+                  <div className="text-lg font-bold kindu-gradient-primary bg-clip-text text-transparent">
+                    {component.price}
                   </div>
                 </div>
-              )}
+              ))}
               
-              <CardHeader className="text-center pb-8">
-                <CardTitle className="text-2xl mb-2">{tier.name}</CardTitle>
-                <div className="text-4xl font-bold kindu-gradient-primary bg-clip-text text-transparent mb-2">
-                  {tier.price}
+              <div className="border-t pt-4 mt-6">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-primary/10">
+                  <div className="font-bold text-lg">Total (All Components)</div>
+                  <div className="text-2xl font-bold kindu-gradient-primary bg-clip-text text-transparent">
+                    {totalPrice}
+                  </div>
                 </div>
-                <p className="text-muted-foreground">{tier.description}</p>
-              </CardHeader>
+              </div>
               
-              <CardContent className="space-y-6">
-                <ul className="space-y-3">
-                  {tier.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                
+              <div className="text-center pt-6">
                 <Button 
                   onClick={() => navigate("/builder")}
-                  className={`w-full ${
-                    tier.popular 
-                      ? 'kindu-gradient-primary hover:scale-105' 
-                      : 'variant-outline hover:bg-primary hover:text-primary-foreground'
-                  } kindu-transition`}
+                  className="kindu-gradient-primary hover:scale-105 kindu-transition px-8 py-3"
+                  size="lg"
                 >
-                  Customize Now
+                  Customize Your Cube
                 </Button>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Global Vision */}

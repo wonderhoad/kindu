@@ -34,6 +34,13 @@ export const AboutSection = () => {
     { stat: "300%", label: "Increase in diagnosis over past decade" }
   ];
 
+  const teamMembers = [
+    { name: "Emilia", role: "3D and Programming", photo: "src/assets/team/emilia.jpg", fallback: "E", color: "kindu-gradient-primary" },
+    { name: "Adel", role: "Digital Artist", photo: "src/assets/team/adel.jpg", fallback: "A", color: "kindu-gradient-coral" },
+    { name: "Aisha", role: "Project Manager", photo: "src/assets/team/aisha.jpg", fallback: "A", color: "kindu-gradient-warm" },
+    { name: "Nursulu", role: "Web Designer", photo: "src/assets/team/nursulu.jpg", fallback: "N", color: "kindu-gradient-navy" }
+  ];
+
   return (
     <section id="about-section" className="py-20 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -125,34 +132,34 @@ export const AboutSection = () => {
           <div className="space-y-6">
             <h4 className="text-xl font-semibold mb-6">👥 Meet the Team</h4>
             <div className="grid grid-cols-2 gap-6">
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto rounded-full kindu-gradient-primary mb-3 flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">E</span>
+              {teamMembers.map((member, index) => (
+                <div key={index} className="text-center">
+                  <div className="w-20 h-20 mx-auto rounded-full mb-3 overflow-hidden">
+                    <img
+                      src={member.photo}
+                      alt={member.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // Fallback to gradient circle with initial if image fails to load
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallbackDiv = target.nextElementSibling as HTMLDivElement;
+                        if (fallbackDiv) {
+                          fallbackDiv.style.display = 'flex';
+                        }
+                      }}
+                    />
+                    <div 
+                      className={`w-full h-full ${member.color} flex items-center justify-center`}
+                      style={{ display: 'none' }}
+                    >
+                      <span className="text-white font-bold text-lg">{member.fallback}</span>
+                    </div>
+                  </div>
+                  <h5 className="font-semibold">{member.name}</h5>
+                  <p className="text-sm text-muted-foreground">{member.role}</p>
                 </div>
-                <h5 className="font-semibold">Emilia</h5>
-                <p className="text-sm text-muted-foreground">3D and Programming</p>
-              </div>
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto rounded-full kindu-gradient-coral mb-3 flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">A</span>
-                </div>
-                <h5 className="font-semibold">Adel</h5>
-                <p className="text-sm text-muted-foreground">Digital Artist</p>
-              </div>
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto rounded-full kindu-gradient-warm mb-3 flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">A</span>
-                </div>
-                <h5 className="font-semibold">Aisha</h5>
-                <p className="text-sm text-muted-foreground">Project Manager</p>
-              </div>
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto rounded-full kindu-gradient-navy mb-3 flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">N</span>
-                </div>
-                <h5 className="font-semibold">Nursulu</h5>
-                <p className="text-sm text-muted-foreground">Web Designer</p>
-              </div>
+              ))}
             </div>
           </div>
         </div>

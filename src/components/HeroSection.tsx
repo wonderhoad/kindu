@@ -55,8 +55,8 @@ export const HeroSection = () => {
                 <div className="text-sm text-muted-foreground">Module Types</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">1000+</div>
-                <div className="text-sm text-muted-foreground">Happy Families</div>
+                <div className="text-lg font-bold text-primary">Coming Soon</div>
+                <div className="text-sm text-muted-foreground">Inclusive Centers Across Kazakhstan</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-primary">24/7</div>
@@ -75,22 +75,13 @@ export const HeroSection = () => {
                 playsInline
                 className="w-full h-full object-cover"
               >
-                <source src="/cube-video.mp4" type="video/mp4" />
+                <source src="src/assets/kindu-cube.mp4" type="video/mp4" />
                 <img
                   src={kinduHeroCube}
                   alt="Kindu Sensory Cube"
                   className="w-full h-full object-cover"
                 />
               </video>
-            </div>
-            
-            {/* Floating Elements */}
-            <div className="absolute -top-4 -right-4 w-20 h-20 kindu-gradient-warm rounded-full flex items-center justify-center kindu-shadow float-animation">
-              <span className="text-white font-bold text-lg">3D</span>
-            </div>
-            
-            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-accent rounded-full flex items-center justify-center kindu-shadow float-animation">
-              <span className="text-accent-foreground font-bold">AI</span>
             </div>
           </div>
         </div>
