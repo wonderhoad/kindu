@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Navbar } from "@/components/Navbar";
 import { AiAssistant } from "@/components/AiAssistant";
+import { Interactive3DCube } from "@/components/Interactive3DCube";
 import { RotateCcw, Save, Share2, ShoppingCart, Plus, Minus, Edit3 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -161,7 +162,6 @@ export default function Builder() {
   
   const [selectedFace, setSelectedFace] = useState(1);
   const [cubeName, setCubeName] = useState("My Sensory Cube");
-  const [childAge, setChildAge] = useState("");
   const [sensoryProfile, setSensoryProfile] = useState("");
   const cubeRef = useRef<HTMLDivElement>(null);
 
@@ -186,12 +186,22 @@ export default function Builder() {
   };
 
   const getTotalPrice = () => {
-    const basePrice = 80; // Oak cube base
-    const assemblyPrice = 45;
+    const basePrice = 4500; // Cube body in tenge
     const modulePrice = cubeFaces.reduce((total, face) => 
-      total + face.modules.reduce((faceTotal, module) => faceTotal + module.price, 0), 0
+      total + face.modules.reduce((faceTotal, module) => {
+        // Convert module prices from USD to tenge
+        const moduleMap: { [key: string]: number } = {
+          'zip-zip': 1550,
+          'bio': 1600,
+          'eco-sea': 3400,
+          'help-kindu': 1400,
+          'hedgehog': 900,
+          'press-planet': 3600,
+        };
+        return faceTotal + (moduleMap[module.id.split('-')[0]] || module.price * 50); // fallback conversion
+      }, 0), 0
     );
-    return basePrice + assemblyPrice + modulePrice;
+    return basePrice + modulePrice;
   };
 
   const getTotalModules = () => {
@@ -218,54 +228,18 @@ export default function Builder() {
                   />
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {getTotalModules()} modules • ${getTotalPrice()}
+                  {getTotalModules()} modules • ₸{getTotalPrice().toLocaleString()}
                 </p>
               </div>
 
               {/* 3D Cube Representation */}
-              <div 
-                ref={cubeRef}
-                className="relative w-64 h-64 mx-auto mb-6 cursor-pointer"
-                style={{ perspective: "600px" }}
-              >
-                <div className="absolute inset-0 transform-gpu" style={{ transformStyle: "preserve-3d" }}>
-                  {cubeFaces.map((face, index) => {
-                    const transforms = [
-                      "rotateY(0deg) translateZ(128px)",     // Front
-                      "rotateY(180deg) translateZ(128px)",   // Back  
-                      "rotateY(-90deg) translateZ(128px)",   // Right
-                      "rotateY(90deg) translateZ(128px)",    // Left
-                      "rotateX(90deg) translateZ(128px)",    // Top
-                      "rotateX(-90deg) translateZ(128px)"    // Bottom
-                    ];
-                    
-                    return (
-                      <div
-                        key={face.id}
-                        className={`absolute w-64 h-64 border-4 border-kindu-navy rounded-lg kindu-gradient-warm cursor-pointer kindu-transition ${
-                          selectedFace === face.id ? 'ring-4 ring-primary' : ''
-                        }`}
-                        style={{ transform: transforms[index] }}
-                        onClick={() => setSelectedFace(face.id)}
-                      >
-                        <div className="p-4 h-full flex flex-col">
-                          <div className="text-white font-semibold mb-2 text-center">{face.name}</div>
-                          <div className="grid grid-cols-2 gap-2 flex-1">
-                            {face.modules.slice(0, 6).map((module, modIndex) => (
-                              <div
-                                key={modIndex}
-                                className="bg-white/20 rounded p-2 text-center"
-                              >
-                                <div className="text-2xl">{module.icon}</div>
-                                <div className="text-xs text-white/80">{module.name}</div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+              <div className="flex justify-center mb-6">
+                <Interactive3DCube
+                  size={200}
+                  faces={cubeFaces}
+                  selectedFace={selectedFace}
+                  onFaceClick={setSelectedFace}
+                />
               </div>
 
               {/* Face Selector */}
@@ -285,9 +259,29 @@ export default function Builder() {
 
               {/* Actions */}
               <div className="space-y-3">
-                <Button className="w-full kindu-gradient-primary" size="lg">
+                <Button 
+                  className="w-full kindu-gradient-primary" 
+                  size="lg"
+                  onClick={() => {
+                    // Add to cart functionality
+                    const cartItem = {
+                      id: Date.now(),
+                      name: cubeName,
+                      price: getTotalPrice(),
+                      modules: getTotalModules(),
+                      faces: cubeFaces
+                    };
+                    
+                    // Store in localStorage for now
+                    const existingCart = JSON.parse(localStorage.getItem('kindu-cart') || '[]');
+                    existingCart.push(cartItem);
+                    localStorage.setItem('kindu-cart', JSON.stringify(existingCart));
+                    
+                    toast.success(`${cubeName} added to cart for ₸${getTotalPrice().toLocaleString()}`);
+                  }}
+                >
                   <ShoppingCart className="w-4 h-4 mr-2" />
-                  Add to Cart - ${getTotalPrice()}
+                  Add to Cart - ₸{getTotalPrice().toLocaleString()}
                 </Button>
                 <div className="grid grid-cols-2 gap-2 mb-2">
                   <Button variant="outline" size="sm">
@@ -328,22 +322,7 @@ export default function Builder() {
             {/* Child Profile */}
             <Card className="p-6 mb-6 kindu-shadow">
               <h3 className="text-xl font-semibold mb-4">Child Profile</h3>
-              <div className="grid md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="age">Child's Age</Label>
-                  <Select value={childAge} onValueChange={setChildAge}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select age" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="3-4">3-4 years</SelectItem>
-                      <SelectItem value="5-6">5-6 years</SelectItem>
-                      <SelectItem value="7-8">7-8 years</SelectItem>
-                      <SelectItem value="9-10">9-10 years</SelectItem>
-                      <SelectItem value="11-12">11-12 years</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="profile">Sensory Profile</Label>
                   <Select value={sensoryProfile} onValueChange={setSensoryProfile}>
@@ -400,7 +379,17 @@ export default function Builder() {
                     <div className="text-center">
                       <div className="text-3xl mb-2">{module.icon}</div>
                       <div className="font-medium text-sm">{module.name}</div>
-                      <div className="text-xs text-muted-foreground">${module.price}</div>
+                      <div className="text-xs text-muted-foreground">₸{
+                        const moduleMap: { [key: string]: number } = {
+                          'zip-zip': 1550,
+                          'bio': 1600,
+                          'eco-sea': 3400,
+                          'help-kindu': 1400,
+                          'hedgehog': 900,
+                          'press-planet': 3600,
+                        };
+                        moduleMap[module.id.split('-')[0]] || (module.price * 50)
+                      }</div>
                     </div>
                   </Card>
                 ))}
@@ -430,7 +419,17 @@ export default function Builder() {
                                 <div className="text-3xl">{module.icon}</div>
                                 <div>
                                   <CardTitle className="text-lg">{module.name}</CardTitle>
-                                  <p className="text-sm text-muted-foreground">${module.price}</p>
+                                  <p className="text-sm text-muted-foreground">₸{
+                                    const moduleMap: { [key: string]: number } = {
+                                      'zip-zip': 1550,
+                                      'bio': 1600,
+                                      'eco-sea': 3400,
+                                      'help-kindu': 1400,
+                                      'hedgehog': 900,
+                                      'press-planet': 3600,
+                                    };
+                                    moduleMap[module.id.split('-')[0]] || (module.price * 50)
+                                  }</p>
                                 </div>
                               </div>
                               <Button
