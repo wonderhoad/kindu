@@ -30,7 +30,8 @@ export const Interactive3DCube = ({
   const animationIdRef = useRef<number>();
 
   useEffect(() => {
-    if (!mountRef.current) return;
+    const currentMount = mountRef.current;
+    if (!currentMount) return;
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -51,7 +52,7 @@ export const Interactive3DCube = ({
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     rendererRef.current = renderer;
 
-    mountRef.current.appendChild(renderer.domElement);
+    currentMount.appendChild(renderer.domElement);
 
     // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -252,8 +253,9 @@ export const Interactive3DCube = ({
       renderer.domElement.removeEventListener('touchmove', onMouseMove);
       renderer.domElement.removeEventListener('touchend', onMouseUp);
       
-      if (mountRef.current && renderer.domElement) {
-        mountRef.current.removeChild(renderer.domElement);
+      // Use the currentMount variable captured at the beginning of the effect
+      if (currentMount && renderer.domElement) {
+        currentMount.removeChild(renderer.domElement);
       }
       
       renderer.dispose();
