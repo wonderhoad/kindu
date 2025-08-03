@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import kinduHeroCube from "@/assets/kindu-hero-cube.jpg";
+import { InteractiveImages } from "./InteractiveImages";
 
 export const HeroSection = () => {
   const navigate = useNavigate();
@@ -65,24 +66,9 @@ export const HeroSection = () => {
             </div>
           </div>
 
-          {/* Hero Video */}
+          {/* Interactive Images */}
           <div className="relative">
-            <div className="aspect-square rounded-3xl overflow-hidden kindu-shadow-warm float-animation">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="w-full h-full object-cover"
-              >
-                <source src="src/assets/kindu-cube.mp4" type="video/mp4" />
-                <img
-                  src={kinduHeroCube}
-                  alt="Kindu Sensory Cube"
-                  className="w-full h-full object-cover"
-                />
-              </video>
-            </div>
+            <InteractiveImages />
           </div>
         </div>
       </div>
