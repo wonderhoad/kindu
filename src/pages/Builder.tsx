@@ -38,6 +38,27 @@ const moduleCategories = [
   { id: "emotional", name: "👣 Emotional & Social", color: "bg-kindu-coral" },
 ];
 
+// Centralized module pricing in tenge
+const getModulePriceInTenge = (moduleId: string, fallbackUsdPrice: number): number => {
+  const moduleMap: { [key: string]: number } = {
+    'zip-zip': 1550,
+    'bio': 1600,
+    'eco-sea': 3400,
+    'help-kindu': 1400,
+    'hedgehog': 900,
+    'press-planet': 3600,
+    'forest-sounds': 1750,
+    'texture-wheel': 1250,
+    'color-sequencer': 2250,
+    'fine-motor-maze': 1500,
+    'counting-beads': 1400,
+    'emotion-spinner': 1600,
+  };
+  
+  const baseModuleId = moduleId.split('-')[0];
+  return moduleMap[baseModuleId] || (fallbackUsdPrice * 50); // fallback conversion rate
+};
+
 const sampleModules: Module[] = [
   {
     id: "forest-sounds",
@@ -166,13 +187,28 @@ export default function Builder() {
   const cubeRef = useRef<HTMLDivElement>(null);
 
   const addModuleToFace = (module: Module) => {
+    const currentFace = cubeFaces.find(f => f.id === selectedFace);
+    if (!currentFace) {
+      toast.error("Please select a valid face");
+      return;
+    }
+    
+    if (currentFace.modules.length >= 6) {
+      toast.error("This face is full! Maximum 6 modules per face.");
+      return;
+    }
+
     setCubeFaces(prev => prev.map(face => {
-      if (face.id === selectedFace && face.modules.length < 6) {
-        return { ...face, modules: [...face.modules, { ...module, id: `${module.id}-${Date.now()}` }] };
+      if (face.id === selectedFace) {
+        return { 
+          ...face, 
+          modules: [...face.modules, { ...module, id: `${module.id}-${Date.now()}` }] 
+        };
       }
       return face;
     }));
-    toast.success(`Added ${module.name} to ${cubeFaces.find(f => f.id === selectedFace)?.name}`);
+    
+    toast.success(`Added ${module.name} to ${currentFace.name}`);
   };
 
   const removeModuleFromFace = (moduleId: string) => {
@@ -189,16 +225,7 @@ export default function Builder() {
     const basePrice = 4500; // Cube body in tenge
     const modulePrice = cubeFaces.reduce((total, face) => 
       total + face.modules.reduce((faceTotal, module) => {
-        // Convert module prices from USD to tenge
-        const moduleMap: { [key: string]: number } = {
-          'zip-zip': 1550,
-          'bio': 1600,
-          'eco-sea': 3400,
-          'help-kindu': 1400,
-          'hedgehog': 900,
-          'press-planet': 3600,
-        };
-        return faceTotal + (moduleMap[module.id.split('-')[0]] || module.price * 50); // fallback conversion
+        return faceTotal + getModulePriceInTenge(module.id, module.price);
       }, 0)
     , 0);
     return basePrice + modulePrice;
@@ -207,6 +234,55 @@ export default function Builder() {
   const getTotalModules = () => {
     return cubeFaces.reduce((total, face) => total + face.modules.length, 0);
   };
+
+  const handleAddToCart = () => {
+    if (getTotalModules() === 0) {
+      toast.error("Please add at least one module to your cube before adding to cart");
+      return;
+    }
+
+    const cartItem = {
+      id: Date.now(),
+      name: cubeName,
+      price: getTotalPrice(),
+      modules: getTotalModules(),
+      faces: cubeFaces
+    };
+    
+    try {
+      // Store in localStorage for now
+      const existingCart = JSON.parse(localStorage.getItem('kindu-cart') || '[]');
+      existingCart.push(cartItem);
+      localStorage.setItem('kindu-cart', JSON.stringify(existingCart));
+      
+      toast.success(`${cubeName} added to cart for ₸${getTotalPrice().toLocaleString()}`);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast.error("Failed to add to cart. Please try again.");
+    }
+  };
+
+  const handleResetCube = () => {
+    setCubeFaces(Array.from({ length: 6 }, (_, i) => ({
+      id: i + 1,
+      name: `Face ${i + 1}`,
+      modules: []
+    })));
+    setCubeName("My Sensory Cube");
+    setSelectedFace(1);
+    toast.success("Cube reset successfully");
+  };
+
+  const handleGetAIRecommendations = () => {
+    const aiButton = document.querySelector('[data-ai-assistant]') as HTMLElement;
+    if (aiButton) {
+      aiButton.click();
+    } else {
+      toast.error("AI Assistant not available");
+    }
+  };
+
+  const currentFace = cubeFaces.find(f => f.id === selectedFace);
 
   return (
     <div className="min-h-screen bg-background">
@@ -225,6 +301,7 @@ export default function Builder() {
                     value={cubeName}
                     onChange={(e) => setCubeName(e.target.value)}
                     className="text-center font-semibold border-none bg-transparent"
+                    placeholder="Enter cube name"
                   />
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -262,23 +339,7 @@ export default function Builder() {
                 <Button 
                   className="w-full kindu-gradient-primary" 
                   size="lg"
-                  onClick={() => {
-                    // Add to cart functionality
-                    const cartItem = {
-                      id: Date.now(),
-                      name: cubeName,
-                      price: getTotalPrice(),
-                      modules: getTotalModules(),
-                      faces: cubeFaces
-                    };
-                    
-                    // Store in localStorage for now
-                    const existingCart = JSON.parse(localStorage.getItem('kindu-cart') || '[]');
-                    existingCart.push(cartItem);
-                    localStorage.setItem('kindu-cart', JSON.stringify(existingCart));
-                    
-                    toast.success(`${cubeName} added to cart for ₸${getTotalPrice().toLocaleString()}`);
-                  }}
+                  onClick={handleAddToCart}
                 >
                   <ShoppingCart className="w-4 h-4 mr-2" />
                   Add to Cart - ₸{getTotalPrice().toLocaleString()}
@@ -297,14 +358,7 @@ export default function Builder() {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => {
-                      setCubeFaces(Array.from({ length: 6 }, (_, i) => ({
-                        id: i + 1,
-                        name: `Face ${i + 1}`,
-                        modules: []
-                      })));
-                      toast.success("Cube reset successfully");
-                    }}
+                    onClick={handleResetCube}
                   >
                     <RotateCcw className="w-4 h-4 mr-1" />
                     Reset
@@ -340,12 +394,7 @@ export default function Builder() {
                   <Button 
                     variant="outline" 
                     className="w-full"
-                    onClick={() => {
-                      const aiButton = document.querySelector('[data-ai-assistant]');
-                      if (aiButton) {
-                        (aiButton as HTMLElement).click();
-                      }
-                    }}
+                    onClick={handleGetAIRecommendations}
                   >
                     Get AI Recommendations
                   </Button>
@@ -357,16 +406,16 @@ export default function Builder() {
             <Card className="p-6 mb-6 kindu-shadow">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold">
-                  Editing: {cubeFaces.find(f => f.id === selectedFace)?.name}
+                  Editing: {currentFace?.name || 'Unknown Face'}
                 </h3>
                 <Badge variant="secondary">
-                  {cubeFaces.find(f => f.id === selectedFace)?.modules.length || 0}/6 modules
+                  {currentFace?.modules.length || 0}/6 modules
                 </Badge>
               </div>
               
               {/* Current modules on face */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                {cubeFaces.find(f => f.id === selectedFace)?.modules.map((module) => (
+                {currentFace?.modules.map((module) => (
                   <Card key={module.id} className="p-4 relative">
                     <Button
                       variant="destructive"
@@ -379,20 +428,12 @@ export default function Builder() {
                     <div className="text-center">
                       <div className="text-3xl mb-2">{module.icon}</div>
                       <div className="font-medium text-sm">{module.name}</div>
-                      <div className="text-xs text-muted-foreground">₸{(() => {
-                        const moduleMap: { [key: string]: number } = {
-                          'zip-zip': 1550,
-                          'bio': 1600,
-                          'eco-sea': 3400,
-                          'help-kindu': 1400,
-                          'hedgehog': 900,
-                          'press-planet': 3600,
-                        };
-                        return moduleMap[module.id.split('-')[0]] || (module.price * 50);
-                      })()}</div>
+                      <div className="text-xs text-muted-foreground">
+                        ₸{getModulePriceInTenge(module.id, module.price)}
+                      </div>
                     </div>
                   </Card>
-                ))}
+                )) || []}
               </div>
             </Card>
 
@@ -419,23 +460,15 @@ export default function Builder() {
                                 <div className="text-3xl">{module.icon}</div>
                                 <div>
                                   <CardTitle className="text-lg">{module.name}</CardTitle>
-                                  <p className="text-sm text-muted-foreground">₸{(() => {
-                                    const moduleMap: { [key: string]: number } = {
-                                      'zip-zip': 1550,
-                                      'bio': 1600,
-                                      'eco-sea': 3400,
-                                      'help-kindu': 1400,
-                                      'hedgehog': 900,
-                                      'press-planet': 3600,
-                                    };
-                                    return moduleMap[module.id.split('-')[0]] || (module.price * 50);
-                                  })()}</p>
+                                  <p className="text-sm text-muted-foreground">
+                                    ₸{getModulePriceInTenge(module.id, module.price)}
+                                  </p>
                                 </div>
                               </div>
                               <Button
                                 size="sm"
                                 onClick={() => addModuleToFace(module)}
-                                disabled={cubeFaces.find(f => f.id === selectedFace)?.modules.length >= 6}
+                                disabled={currentFace?.modules.length >= 6}
                                 className="kindu-gradient-primary"
                               >
                                 <Plus className="w-4 h-4" />
