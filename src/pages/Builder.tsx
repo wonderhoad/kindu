@@ -416,7 +416,7 @@ export default function Builder() {
               
               {/* Current modules on face */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                {currentFace?.modules.map((module) => (
+                {cubeFaces.find(f => f.id === selectedFace)?.modules.map((module) => (
                   <Card key={module.id} className="p-4 relative">
                     <Button
                       variant="destructive"
@@ -429,12 +429,20 @@ export default function Builder() {
                     <div className="text-center">
                       <div className="text-3xl mb-2">{module.icon}</div>
                       <div className="font-medium text-sm">{module.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        ₸{getModulePriceInTenge(module.id, module.price)}
-                      </div>
+                      <div className="text-xs text-muted-foreground">₸{
+                        const moduleMap: { [key: string]: number } = {
+                          'zip-zip': 1550,
+                          'bio': 1600,
+                          'eco-sea': 3400,
+                          'help-kindu': 1400,
+                          'hedgehog': 900,
+                          'press-planet': 3600,
+                        };
+                        moduleMap[module.id.split('-')[0]] || (module.price * 50)
+                      }</div>
                     </div>
                   </Card>
-                )) || []}
+                ))}
               </div>
             </Card>
 
@@ -461,9 +469,17 @@ export default function Builder() {
                                 <div className="text-3xl">{module.icon}</div>
                                 <div>
                                   <CardTitle className="text-lg">{module.name}</CardTitle>
-                                  <p className="text-sm text-muted-foreground">
-                                    ₸{getModulePriceInTenge(module.id, module.price)}
-                                  </p>
+                                  <p className="text-sm text-muted-foreground">₸{
+                                    const moduleMap: { [key: string]: number } = {
+                                      'zip-zip': 1550,
+                                      'bio': 1600,
+                                      'eco-sea': 3400,
+                                      'help-kindu': 1400,
+                                      'hedgehog': 900,
+                                      'press-planet': 3600,
+                                    };
+                                    moduleMap[module.id.split('-')[0]] || (module.price * 50)
+                                  }</p>
                                 </div>
                               </div>
                               <Button
